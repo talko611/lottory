@@ -1,0 +1,2 @@
+# lottory
+Lottry project
