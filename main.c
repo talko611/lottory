@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -32,6 +33,8 @@ typedef struct playersList {
     PlayerNode *tail;
 } PlayersList;
 
+//prints
+//
 
 int *generateRandomNumbers();
 
@@ -79,6 +82,7 @@ void calcResults(PlayersList *playersList, int *winningNumbers);
 
 int *sumColumnsMatches(PlayersList *playersList);
 
+//
 ColumnNode *SortedMerge(ColumnNode *a, ColumnNode *b);
 
 void FrontBackSplit(ColumnNode *source,
@@ -87,8 +91,10 @@ void FrontBackSplit(ColumnNode *source,
 void MergeSort(ColumnNode **headRef);
 
 void mergeSortColumnList(ColumnsList *columnsList);
+//
 
 
+//
 void writeToFile(char *fName, PlayersList *playersList, int numOfPlayers, int *winningNumbers);
 
 void compressAndWrite(FILE *fp, int *numbers);
@@ -96,6 +102,7 @@ void compressAndWrite(FILE *fp, int *numbers);
 int *convertCompressedData(unsigned char *compress);// insert to main
 
 PlayersList *readLastGameResultsFromFile(FILE *fp, int **winningNumbers);
+//
 
 void freeColumnsList(ColumnsList *columnsList);
 
@@ -124,7 +131,6 @@ int main() {
         switch (choice) {
             case 1:
                 option1(&saveToFile);
-
                 break;
             case 2:
                 option2(saveToFile);
@@ -138,19 +144,20 @@ int main() {
 }
 
 void option1(int *saveToFile) {
-    int subChoice, numOfPlayers, numOfCols, *winningNumbers, *matchesSummary;
+    int i, subChoice, numOfPlayers, numOfCols, *winningNumbers, *matchesSummary;
     PlayersList *playersList;
     PlayerNode *player;
     char *playerName;
 
     playersList = createPlayerList();
     numOfPlayers = validateNumOfPlayers();
-    for (int i = 0; i < numOfPlayers; i++) {// for each player
-        getchar();
+
+    for (i = 0; i < numOfPlayers; i++) {// for each player
+        getchar(); //Clean buffer
         playerName = getPlayerName();
         player = createNewPlayerNode(playerName);
         subChoice = validateSubMenuInput();
-        player->columnCounter = validateNumOfColumns();;
+        player->columnCounter = validateNumOfColumns();
         switch (subChoice) {
             case 1:
                 player->columns = enterManualColumns(player->columnCounter);
@@ -162,6 +169,7 @@ void option1(int *saveToFile) {
                 break;
         }
 
+        //insert to list -- create func
         if (playersList->head == NULL) {
             playersList->head = player;
             playersList->tail = playersList->head;
@@ -170,6 +178,7 @@ void option1(int *saveToFile) {
             playersList->tail = player;
         }
     }
+
     winningNumbers = generateRandomNumbers();
     calcResults(playersList, winningNumbers);
     matchesSummary = sumColumnsMatches(playersList);
@@ -177,10 +186,12 @@ void option1(int *saveToFile) {
     printPlayersList(playersList);
     printColumnsSummary(matchesSummary);
     printPlayersWithMaxAvgMatch(playersList);
+
     if (askToContinue()) {
-        writeToFile("/Users/talkoren/sandbox/university/lottory/data.bin", playersList, numOfPlayers, winningNumbers);
+        writeToFile("data.bin", playersList, numOfPlayers, winningNumbers);
         *saveToFile = 1;
     }
+
     freePlayersList(playersList);
     free(winningNumbers);
     free(matchesSummary);
@@ -214,7 +225,7 @@ void option2(int saveToFile) {
         printf("No saved data\n");
         return;
     }
-    fp = fopen("/Users/talkoren/sandbox/university/lottory/data.bin", "rb");
+    fp = fopen("data.bin", "rb");
     checkFileAllocation(fp);
 
     playersList = readLastGameResultsFromFile(fp, &winningNumbers);
@@ -260,7 +271,7 @@ int validateNumOfColumns() {
 void printMainMenu() {
     int i;
     printf("--------------------------------------------------\n");
-    printf("LOTTORY GAME\n");
+    printf("LOTTERY GAME\n");
     printf("--------------------------------------------------\n");
     printf("Please choose one of the following options\n");
     printf("1. Start New game\n");
@@ -340,24 +351,34 @@ void checkFileAllocation(void *p) {
 }
 
 ColumnsList *enterManualColumns(int numOfCols) {
-    int numbers[6], bucket[16] = {0};
+    int numbers[6], bucket[16], num, i, j, k, t, counter = 0;
     ColumnNode *columnNode;
     ColumnsList *columnList = createColumnList();
 
-    for (int i = 0; i < numOfCols; i++) {//for each column
+    for (i = 0; i < numOfCols; i++) {//for each column
+        for (k = 0; k < 16; bucket[k] = 0, k++);
         printf("please enter 6 numbers:");
-        for (int j = 0; j < 6; j++) {//get 6 numbers
-            scanf("%d", &numbers[j]);
-            if (validateNumbers(numbers[j]) == 0) {
-                printf("Invalid number\n please enter again: ");
+        for (j = 0; j < 6; j++) {//get 6 numbers
+            scanf("%d", &num);
+            if (validateNumbers(num) == 0) {
+                printf("Invalid number\nplease enter again: ");
                 j--;
-            } else if (bucket[numbers[j]] == 1) {
-                printf("number is already use\n please enter again: ");
+            } else if (bucket[num] == 1) {
+                printf("number is already use\nplease enter again: ");
                 j--;
             } else {
-                bucket[numbers[j]] = 1;
+                bucket[num] = 1;
             }
         }
+
+        //Check here
+        for (t = 0; t < 16; t++) {
+            if (bucket[t] == 1) {
+                numbers[counter] = t;
+                counter++;
+            }
+        }
+
         columnNode = createColumn(numbers);
         if (columnList->head == NULL) {
             columnList->head = columnNode;
@@ -371,7 +392,7 @@ ColumnsList *enterManualColumns(int numOfCols) {
 }
 
 int validateNumbers(int number) {
-    if (number < 1 || number > 15) {
+    if (number >= 1 && number <= 15) {
         return 1;
     }
     return 0;
@@ -509,7 +530,7 @@ int *generateRandomNumbers() {
     checkMemoryAllocation(numbers);
 
     counter = 0;
-    while (counter <= 6) {
+    while (counter < 6) {
         num = generateRandomNumber();
         if (bucket[num] == 0) {
             counter++;
@@ -580,7 +601,9 @@ int *sumColumnsMatches(PlayersList *playersList) {
 
     bucket = (int *) malloc(sizeof(int) * 7);
     checkMemoryAllocation(bucket);
-    for (i = 0; i < 7; i++, bucket[i] = 0);
+    for (i = 0; i < 7; i++) {
+        bucket[i] = 0;
+    }
 
     pPlayer = playersList->head;
     while (pPlayer != NULL) {
@@ -652,13 +675,11 @@ void writeToFile(char *fName, PlayersList *playersList, int numOfPlayers, int *w
 void compressAndWrite(FILE *fp, int *numbers) {
     unsigned char compress[3] = {0};
     int i, j;
-    unsigned char mask = 0;
 
     for (i = 0, j = 0; i < 3; i++, j += 2) {
         compress[i] = compress[i] | (char) numbers[j];
         compress[i] = compress[i] << 4;
         compress[i] = compress[i] | (char) numbers[j + 1];
-//        compress[i] = ~mask;
     }
 
     fwrite(compress, sizeof(char), 3, fp);
@@ -710,18 +731,11 @@ PlayersList *readLastGameResultsFromFile(FILE *fp, int **winningNumbers) {
 }
 
 int *convertCompressedData(unsigned char *compress) {
-    int temp, i, j, *numbers;
+    int temp, i, j, numbers[6];
     unsigned char mask1, mask2;
 
-    numbers = (int *) malloc(sizeof(int) * 6);
-    checkMemoryAllocation(numbers);
-
-    //11111111
-    //11110000
-    //----------
-    //1111----
-    mask2 = 0xF;//(00001111)
-    mask1 = mask2 << 4;//(11110000)
+    mask2 = 0xF; //(00001111)
+    mask1 = mask2 << 4; //(11110000)
 
     for (i = 0, j = 0; i < 3; i++, j += 2) {
         numbers[j] = (int) ((compress[i] & mask1) >> 4);
@@ -747,8 +761,8 @@ void freeColumnsList(ColumnsList *columnsList) {
     ColumnNode *pCol;
 
     for (pCol = columnsList->head; pCol != NULL; pCol = columnsList->head) {
-        free(pCol);
         columnsList->head = columnsList->head->next;
+        free(pCol);
     }
     free(columnsList);
 }
