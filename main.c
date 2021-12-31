@@ -99,9 +99,9 @@ void writeToFile(char *fName, PlayersList *playersList, int numOfPlayers, int *w
 
 void compressAndWrite(FILE *fp, int *numbers);
 
-int *convertCompressedData(unsigned char *compress);// insert to main
+void convertCompressedData(unsigned char* compress, int* numbers);// insert to main
 
-PlayersList *readLastGameResultsFromFile(FILE *fp, int **winningNumbers);
+PlayersList *readLastGameResultsFromFile(FILE *fp, int *winningNumbers);
 //
 
 void freeColumnsList(ColumnsList *columnsList);
@@ -121,6 +121,14 @@ int validateNumbers(int number);
 int validateNumOfPlayers();
 
 int askToContinue();
+
+int isEmptyCoulmnList(ColumnsList* lst);
+
+void insertNodeToEndColumnList(ColumnsList* lst, ColumnNode* newTail);
+
+void insertNodeToEndPlayerList(PlayersList* lst, PlayerNode* newTail);
+
+int isEmptyPlayerList(PlayersList* lst);
 
 int main() {
     int choice, saveToFile = 0;
@@ -153,7 +161,6 @@ void option1(int *saveToFile) {
     numOfPlayers = validateNumOfPlayers();
 
     for (i = 0; i < numOfPlayers; i++) {// for each player
-        getchar(); //Clean buffer
         playerName = getPlayerName();
         player = createNewPlayerNode(playerName);
         subChoice = validateSubMenuInput();
@@ -169,14 +176,7 @@ void option1(int *saveToFile) {
                 break;
         }
 
-        //insert to list -- create func
-        if (playersList->head == NULL) {
-            playersList->head = player;
-            playersList->tail = playersList->head;
-        } else {
-            playersList->tail->next = player;
-            playersList->tail = player;
-        }
+        insertNodeToEndPlayerList(playersList, player);
     }
 
     winningNumbers = generateRandomNumbers();
@@ -226,9 +226,12 @@ void option2(int saveToFile) {
         return;
     }
     fp = fopen("data.bin", "rb");
-    checkFileAllocation(fp);
+    checkMemoryAllocation(fp);
 
-    playersList = readLastGameResultsFromFile(fp, &winningNumbers);
+    winningNumbers = (int*)malloc(sizeof(int) * 6);
+    checkMemoryAllocation(winningNumbers);
+
+    playersList = readLastGameResultsFromFile(fp, winningNumbers);
     calcResults(playersList, winningNumbers);
     printf("--------------------------------------------------\n");
     printf("AFTER READING\n");
@@ -257,6 +260,7 @@ int validateNumOfPlayers() {
 
 int validateNumOfColumns() {
     int numOfCols;
+
     printf("Please enter number of columns: ");
     scanf("%d", &numOfCols);
 
@@ -371,22 +375,15 @@ ColumnsList *enterManualColumns(int numOfCols) {
             }
         }
 
-        //Check here
         for (t = 0; t < 16; t++) {
             if (bucket[t] == 1) {
                 numbers[counter] = t;
                 counter++;
             }
         }
-
+        counter = 0;
         columnNode = createColumn(numbers);
-        if (columnList->head == NULL) {
-            columnList->head = columnNode;
-            columnList->tail = columnList->head;
-        } else {
-            columnList->tail->next = columnNode;
-            columnList->tail = columnNode;
-        }
+        insertNodeToEndColumnList(columnList, columnNode);
     }
     return columnList;
 }
@@ -406,13 +403,7 @@ ColumnsList *enterAutoColumns(int numOfCols) {
     for (int i = 0; i < numOfCols; i++) {//for each column
         numbers = generateRandomNumbers();
         columnNode = createColumn(numbers);
-        if (columnList->head == NULL) {
-            columnList->head = columnNode;
-            columnList->tail = columnList->head;
-        } else {
-            columnList->tail->next = columnNode;
-            columnList->tail = columnNode;
-        }
+        insertNodeToEndColumnList(columnList, columnNode);
         free(numbers);
     }
     return columnList;
@@ -449,6 +440,7 @@ char *getPlayerName() {
     checkMemoryAllocation(name);
 
     printf("Please enter your name: ");
+    getchar(); //Clean buffer
     ch = getchar();
 
     while (ch != '\n') {
@@ -466,7 +458,6 @@ char *getPlayerName() {
     name[logSize] = '\0';
 
     return name;
-
 }
 
 void printPlayer(PlayerNode *player) {
@@ -475,7 +466,7 @@ void printPlayer(PlayerNode *player) {
     printf("--------------------------------------------------\n");
     printf("Name: %s\n", player->name);
     while (temp != NULL) {
-        printf("(%d) ", temp->matches);
+        printf("(Matches: %d) ", temp->matches);
         printColumn(temp->numbers, 6);
         temp = temp->next;
     }
@@ -685,17 +676,18 @@ void compressAndWrite(FILE *fp, int *numbers) {
     fwrite(compress, sizeof(char), 3, fp);
 }
 
-PlayersList *readLastGameResultsFromFile(FILE *fp, int **winningNumbers) {
+PlayersList *readLastGameResultsFromFile(FILE *fp, int *winningNumbers) {
     PlayersList *playersList;
     PlayerNode *pPlayer;
     ColumnsList *pColList;
     ColumnNode *pCol;
     char *playerName;
     unsigned char compress[3];
-    int numOfPlayers, i, j, nameLen;
+    int numOfPlayers, i, j, nameLen, numbers[6];
 
     fread(&numOfPlayers, sizeof(int), 1, fp);
     playersList = createPlayerList();
+
     for (i = 0; i < numOfPlayers; i++) {
         fread(&nameLen, sizeof(int), 1, fp);
         playerName = (char *) malloc(sizeof(char) * (nameLen + 1));
@@ -705,33 +697,27 @@ PlayersList *readLastGameResultsFromFile(FILE *fp, int **winningNumbers) {
         pPlayer = createNewPlayerNode(playerName);
         fread(&pPlayer->columnCounter, sizeof(int), 1, fp);
         pColList = createColumnList();
+
         for (j = 0; j < pPlayer->columnCounter; j++) {
             fread(compress, sizeof(unsigned char), 3, fp);
-            pCol = createColumn(convertCompressedData(compress));
-            if (pColList->head == NULL) {
-                pColList->head = pColList->tail = pCol;
-            } else {
-                pColList->tail->next = pCol;
-                pColList->tail = pCol;
-            }
+            convertCompressedData(compress, numbers);
+            pCol = createColumn(numbers);
+            insertNodeToEndColumnList(pColList, pCol);
         }
+
         pPlayer->columns = pColList;
-        if (playersList->head == NULL) {
-            playersList->head = playersList->tail = pPlayer;
-        } else {
-            playersList->tail->next = pPlayer;
-            playersList->tail = pPlayer;
-        }
+        insertNodeToEndPlayerList(playersList, pPlayer);
     }
+
     fread(compress, sizeof(unsigned char), 3, fp);
-    *winningNumbers = convertCompressedData(compress);
+    convertCompressedData(compress, winningNumbers);
     fclose(fp);
 
     return playersList;
 }
 
-int *convertCompressedData(unsigned char *compress) {
-    int temp, i, j, numbers[6];
+void convertCompressedData(unsigned char *compress, int* numbers) {
+    int temp, i, j;
     unsigned char mask1, mask2;
 
     mask2 = 0xF; //(00001111)
@@ -741,8 +727,6 @@ int *convertCompressedData(unsigned char *compress) {
         numbers[j] = (int) ((compress[i] & mask1) >> 4);
         numbers[j + 1] = (int) (compress[i] & mask2);
     }
-
-    return numbers;
 }
 
 void freePlayersList(PlayersList *playersList) {
@@ -830,17 +814,39 @@ void mergeSortColumnList(ColumnsList *columnsList) {
     columnsList->tail = head;
 }
 
+void insertNodeToEndColumnList(ColumnsList* lst, ColumnNode* newTail) {
+    if (isEmptyCoulmnList(lst)) {
+        lst->head = lst->tail = newTail;
+    }
+    else {
+        lst->tail->next = newTail;
+        lst->tail = newTail;
+    }
+}
 
+int isEmptyCoulmnList(ColumnsList* lst) {
+    if (lst->head == NULL) {
+        return 1;
+    }
+    return 0;
+}
 
-/*To do:
- - read from file - done
- - merge sort - done
- - free data - done
- - validation
- - clean code
- - split to files
- - calculate data after reading  -done
- - refactor prints
- */
+void insertNodeToEndPlayerList(PlayersList* lst, PlayerNode* newTail) {
+    if (isEmptyPlayerList(lst)) {
+        lst->head = lst->tail = newTail;
+    }
+    else {
+        lst->tail->next = newTail;
+        lst->tail = newTail;
+    }
+}
+
+int isEmptyPlayerList(PlayersList* lst) {
+    if (lst->head == NULL) {
+        return 1;
+    }
+    return 0;
+}
+
 
 
