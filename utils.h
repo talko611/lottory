@@ -1,11 +1,9 @@
-# pragma once
+#pragma once
 #define _CRT_SECURE_NO_WARNINGS
 #define COLUMN_LEN 6
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <ctype.h>
 
 typedef struct columnNode {

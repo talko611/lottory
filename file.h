@@ -1,5 +1,5 @@
+#pragma once
 #include "player.h"
-#include "validation.h"
 
 //This function writes game results to a file
 void writeToFile(char* fName, PlayersList* playersList, int numOfPlayers, int* winningNumbers);

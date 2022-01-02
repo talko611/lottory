@@ -1,4 +1,4 @@
-#include "player.h"
+#pragma once
 #include "file.h"
 #include "print.h"
 

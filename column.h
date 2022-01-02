@@ -1,14 +1,14 @@
+#pragma once
 #include "utils.h"
-#include "validation.h"
 #include "random.h"
 
 //This function counts the number of matches between source and target
 int countMatches(int* source, int* target);
-//This function ???
+//This function connects the nodes of the link list (used in mergeSort)
 ColumnNode* sortedMerge(ColumnNode* a, ColumnNode* b);
-//This function ???
+//This function is a merge sort for a column list
 void mergeSort(ColumnNode** headRef);
-//This function ???
+//This function finds the middle of a linked list and returns the nodes of left and right parts
 void FrontBackSplit(ColumnNode* source, ColumnNode** frontRef, ColumnNode** backRef);
 //This function sorts a given column list
 void mergeSortColumnList(ColumnsList* columnsList);
@@ -26,11 +26,11 @@ int* sumColumnsMatches(PlayersList* playersList);
 int validateNumOfColumns();
 //This function inserts a newTail to the end of lst
 void insertNodeToEndColumnList(ColumnsList* lst, ColumnNode* newTail);
+//This function checks if a given column list is empty
+int isEmptyCoulmnList(ColumnsList* lst);
 //This function prints a column
 void printColumn(int* numbers, int size);
 //This function prints a matches summary
 void printColumnsSummary(int* array);
-//This function checks if a given column list is empty
-int isEmptyCoulmnList(ColumnsList* lst);
 //This function frees a given column list
 void freeColumnsList(ColumnsList* columnsList);
