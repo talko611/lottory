@@ -4,11 +4,11 @@
 
 //This function counts the number of matches between source and target
 int countMatches(int* source, int* target);
-//This function ???
+//Use inside merge sort connect the nodes of the link list
 ColumnNode* sortedMerge(ColumnNode* a, ColumnNode* b);
-//This function ???
+//Merge sort to column list
 void mergeSort(ColumnNode** headRef);
-//This function ???
+//Find the middle of link list and returns the nodes of left and right part
 void FrontBackSplit(ColumnNode* source, ColumnNode** frontRef, ColumnNode** backRef);
 //This function sorts a given column list
 void mergeSortColumnList(ColumnsList* columnsList);
