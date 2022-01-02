@@ -159,6 +159,30 @@ ColumnsList* enterManualColumns(int numOfCols) {
     return columnList;
 }
 
+int* sumColumnsMatches(PlayersList* playersList) {
+    PlayerNode* pPlayer;
+    ColumnNode* pCol;
+    int* bucket, i;
+
+    bucket = (int*)malloc(sizeof(int) * 7);
+    checkMemoryAllocation(bucket);
+    for (i = 0; i < 7; i++) {
+        bucket[i] = 0;
+    }
+
+    pPlayer = playersList->head;
+    while (pPlayer != NULL) {
+        pCol = pPlayer->columns->head;
+        while (pCol != NULL) {
+            bucket[pCol->matches]++;
+            pCol = pCol->next;
+        }
+        pPlayer = pPlayer->next;
+    }
+
+    return bucket;
+}
+
 void insertNodeToEndColumnList(ColumnsList* lst, ColumnNode* newTail) {
     if (isEmptyCoulmnList(lst)) {
         lst->head = lst->tail = newTail;

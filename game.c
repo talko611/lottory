@@ -61,7 +61,7 @@ int askToContinue() {
             return 0;
         default:
             printf("Invalid input\n");
-            printf("` enter choice again: ");
+            printf("Please enter choice again: ");
         }
     }
 }
@@ -94,37 +94,22 @@ void option2(int saveToFile) {
     free(matchesSummary);
 }
 
-int validateMainMenuInput() {
-    int choice;
+void calcResults(PlayersList* playersList, int* winningNumbers) {
+    PlayerNode* pPlayer;
+    ColumnNode* pCol;
+    double totalMatches;
 
-    printMainMenu();
-    while (1) {
-        scanf("%d", &choice);
-        switch (choice) {
-        case 1:
-        case 2:
-        case 3:
-            return choice;
-        default:
-            printf("Invalid input\n");
-            printf("Please enter choice again: ");
+    pPlayer = playersList->head;
+    while (pPlayer != NULL) {
+        pCol = pPlayer->columns->head;
+        totalMatches = 0;
+        while (pCol != NULL) {
+            pCol->matches = countMatches(winningNumbers, pCol->numbers);
+            totalMatches += pCol->matches;
+            pCol = pCol->next;
         }
-    }
-}
-
-int validateSubMenuInput() {
-    int choice;
-
-    printSubMenu();
-    while (1) {
-        scanf("%d", &choice);
-        switch (choice) {
-        case 1:
-        case 2:
-            return choice;
-        default:
-            printf("Invalid input\n");
-            printf("Please enter choice again: ");
-        }
+        pPlayer->avgMatch = totalMatches / pPlayer->columnCounter;
+        mergeSortColumnList(pPlayer->columns);
+        pPlayer = pPlayer->next;
     }
 }

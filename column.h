@@ -20,6 +20,8 @@ ColumnNode* createColumn(int* numbers);
 ColumnsList* createColumnList();
 //This function creates manual columns and returns it
 ColumnsList* enterManualColumns(int numOfCols);
+//This function sums the matches for a player
+int* sumColumnsMatches(PlayersList* playersList);
 //This function validates numbers of columns
 int validateNumOfColumns();
 //This function inserts a newTail to the end of lst

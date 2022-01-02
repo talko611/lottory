@@ -8,7 +8,5 @@ void option1(int* saveToFile);
 int askToContinue();
 //This function presents last game results
 void option2(int saveToFile);
-//This function scans an option (1 / 2 / 3) for main menu, validates it and returns it
-int validateMainMenuInput();
-//This function scans an option  (1 / 2) for sub menu, validates it and returns it
-int validateSubMenuInput();
+//This function calculates matches between playersList and winningNumbers
+void calcResults(PlayersList* playersList, int* winningNumbers);

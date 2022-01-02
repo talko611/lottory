@@ -82,30 +82,6 @@ char* getPlayerName() {
     return name;
 }
 
-int* sumColumnsMatches(PlayersList* playersList) {
-    PlayerNode* pPlayer;
-    ColumnNode* pCol;
-    int* bucket, i;
-
-    bucket = (int*)malloc(sizeof(int) * 7);
-    checkMemoryAllocation(bucket);
-    for (i = 0; i < 7; i++) {
-        bucket[i] = 0;
-    }
-
-    pPlayer = playersList->head;
-    while (pPlayer != NULL) {
-        pCol = pPlayer->columns->head;
-        while (pCol != NULL) {
-            bucket[pCol->matches]++;
-            pCol = pCol->next;
-        }
-        pPlayer = pPlayer->next;
-    }
-
-    return bucket;
-}
-
 PlayerNode* createNewPlayerNode(char* name) {
     PlayerNode* res;
     res = (PlayerNode*)malloc(sizeof(PlayerNode));
@@ -127,26 +103,6 @@ void insertNodeToEndPlayerList(PlayersList* lst, PlayerNode* newTail) {
     else {
         lst->tail->next = newTail;
         lst->tail = newTail;
-    }
-}
-
-void calcResults(PlayersList *playersList, int *winningNumbers) {
-    PlayerNode *pPlayer;
-    ColumnNode *pCol;
-    double totalMatches;
-
-    pPlayer = playersList->head;
-    while (pPlayer != NULL) {
-        pCol = pPlayer->columns->head;
-        totalMatches = 0;
-        while (pCol != NULL) {
-            pCol->matches = countMatches(winningNumbers, pCol->numbers);
-            totalMatches += pCol->matches;
-            pCol = pCol->next;
-        }
-        pPlayer->avgMatch = totalMatches / pPlayer->columnCounter;
-        mergeSortColumnList(pPlayer->columns);
-        pPlayer = pPlayer->next;
     }
 }
 

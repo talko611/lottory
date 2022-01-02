@@ -27,6 +27,41 @@ int validateNumOfPlayers() {
     return numOfPlayers;
 }
 
+int validateMainMenuInput() {
+    int choice;
+
+    printMainMenu();
+    while (1) {
+        scanf("%d", &choice);
+        switch (choice) {
+        case 1:
+        case 2:
+        case 3:
+            return choice;
+        default:
+            printf("Invalid input\n");
+            printf("Please enter choice again: ");
+        }
+    }
+}
+
+int validateSubMenuInput() {
+    int choice;
+
+    printSubMenu();
+    while (1) {
+        scanf("%d", &choice);
+        switch (choice) {
+        case 1:
+        case 2:
+            return choice;
+        default:
+            printf("Invalid input\n");
+            printf("Please enter choice again: ");
+        }
+    }
+}
+
 int validateNumbers(int number) {
     if (number >= 1 && number <= 15) {
         return 1;
