@@ -1,10 +1,10 @@
 #include "game.h"
 
-void option1(int* saveToFile) {
-    int i, subChoice, numOfPlayers, numOfCols, * winningNumbers, * matchesSummary;
-    PlayersList* playersList;
-    PlayerNode* player;
-    char* playerName;
+void option1(int *saveToFile) {
+    int i, subChoice, numOfPlayers, numOfCols, *winningNumbers, *matchesSummary;
+    PlayersList *playersList;
+    PlayerNode *player;
+    char *playerName;
 
     playersList = createPlayerList();
     numOfPlayers = validateNumOfPlayers();
@@ -15,14 +15,14 @@ void option1(int* saveToFile) {
         subChoice = validateSubMenuInput();
         player->columnCounter = validateNumOfColumns();
         switch (subChoice) {
-        case 1:
-            player->columns = enterManualColumns(player->columnCounter);
-            break;
-        case 2:
-            player->columns = enterAutoColumns(player->columnCounter);
-            break;
-        default:
-            break;
+            case 1:
+                player->columns = enterManualColumns(player->columnCounter);
+                break;
+            case 2:
+                player->columns = enterAutoColumns(player->columnCounter);
+                break;
+            default:
+                break;
         }
 
         insertNodeToEndPlayerList(playersList, player);
@@ -31,7 +31,8 @@ void option1(int* saveToFile) {
 
     winningNumbers = generateRandomNumbers();
     calcResults(playersList, winningNumbers);
-    matchesSummary = sumColumnsMatches(playersList);
+    matchesSummary = sumColumnsMatches(
+            playersList);//creating an array with the sum of all columns with the same match number
     printWinningNumbers(winningNumbers);
     printPlayersList(playersList);
     printColumnsSummary(matchesSummary);
@@ -55,21 +56,21 @@ int askToContinue() {
         ch = getchar();
         ch = tolower(ch);
         switch (ch) {
-        case 'y':
-            return 1;
-        case 'n':
-            return 0;
-        default:
-            printf("Invalid input\n");
-            printf("Please enter choice again: ");
+            case 'y':
+                return 1;
+            case 'n':
+                return 0;
+            default:
+                printf("Invalid input\n");
+                printf("Please enter choice again: ");
         }
     }
 }
 
 void option2(int saveToFile) {
-    int* winningNumbers, * matchesSummary;
-    PlayersList* playersList;
-    FILE* fp;
+    int *winningNumbers, *matchesSummary;
+    PlayersList *playersList;
+    FILE *fp;
 
     if (saveToFile == 0) {
         printf("No saved data\n");
@@ -78,7 +79,7 @@ void option2(int saveToFile) {
     fp = fopen("data.bin", "rb");
     checkMemoryAllocation(fp);
 
-    winningNumbers = (int*)malloc(sizeof(int) * 6);
+    winningNumbers = (int *) malloc(sizeof(int) * 6);
     checkMemoryAllocation(winningNumbers);
 
     playersList = readLastGameResultsFromFile(fp, winningNumbers);
@@ -94,9 +95,9 @@ void option2(int saveToFile) {
     free(matchesSummary);
 }
 
-void calcResults(PlayersList* playersList, int* winningNumbers) {
-    PlayerNode* pPlayer;
-    ColumnNode* pCol;
+void calcResults(PlayersList *playersList, int *winningNumbers) {
+    PlayerNode *pPlayer;
+    ColumnNode *pCol;
     double totalMatches;
 
     pPlayer = playersList->head;

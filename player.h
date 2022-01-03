@@ -8,7 +8,7 @@ void printPlayer(PlayerNode* player);
 PlayersList* createPlayerList();
 //This function prints a players list results
 void printPlayersList(PlayersList* playersList);
-//This function prints the player name with the max matches avarage
+//This function prints the player name with the max matches average
 void printPlayersWithMaxAvgMatch(PlayersList* playersList);
 //This function scans a player name
 char* getPlayerName();

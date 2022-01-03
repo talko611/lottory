@@ -1,6 +1,6 @@
 #include "column.h"
 
-int countMatches(int* source, int* target) {
+int countMatches(int *source, int *target) {
     int i, j, counter;
 
     i = j = 0;
@@ -8,13 +8,11 @@ int countMatches(int* source, int* target) {
     while (i < 6 && j < 6) {
         if (source[i] > target[j]) {
             j++;
-        }
-        else if (source[i] == target[j]) {
+        } else if (source[i] == target[j]) {
             counter++;
             i++;
             j++;
-        }
-        else {
+        } else {
             i++;
         }
     }
@@ -22,8 +20,8 @@ int countMatches(int* source, int* target) {
     return counter;
 }
 
-ColumnNode* sortedMerge(ColumnNode* a, ColumnNode* b) {
-    ColumnNode* result = NULL;
+ColumnNode *sortedMerge(ColumnNode *a, ColumnNode *b) {
+    ColumnNode *result = NULL;
 
     if (a == NULL)
         return (b);
@@ -33,18 +31,17 @@ ColumnNode* sortedMerge(ColumnNode* a, ColumnNode* b) {
     if (a->matches >= b->matches) {
         result = a;
         result->next = sortedMerge(a->next, b);
-    }
-    else {
+    } else {
         result = b;
         result->next = sortedMerge(a, b->next);
     }
     return (result);
 }
 
-void mergeSort(ColumnNode** headRef) {
-    ColumnNode* head = *headRef;
-    ColumnNode* a;
-    ColumnNode* b;
+void mergeSort(ColumnNode **headRef) {
+    ColumnNode *head = *headRef;
+    ColumnNode *a;
+    ColumnNode *b;
 
     if ((head == NULL) || (head->next == NULL)) {
         return;
@@ -58,9 +55,9 @@ void mergeSort(ColumnNode** headRef) {
     *headRef = sortedMerge(a, b);
 }
 
-void FrontBackSplit(ColumnNode* source, ColumnNode** frontRef, ColumnNode** backRef) {
-    ColumnNode* fast;
-    ColumnNode* slow;
+void FrontBackSplit(ColumnNode *source, ColumnNode **frontRef, ColumnNode **backRef) {
+    ColumnNode *fast;
+    ColumnNode *slow;
     slow = source;
     fast = source->next;
 
@@ -77,18 +74,18 @@ void FrontBackSplit(ColumnNode* source, ColumnNode** frontRef, ColumnNode** back
     slow->next = NULL;
 }
 
-void mergeSortColumnList(ColumnsList* columnsList) {
-    ColumnNode* head;
+void mergeSortColumnList(ColumnsList *columnsList) {
+    ColumnNode *head;
     mergeSort(&(columnsList->head));
 
     for (head = columnsList->head; head->next != NULL; head = head->next);
     columnsList->tail = head;
 }
 
-ColumnsList* enterAutoColumns(int numOfCols) {
-    ColumnNode* columnNode;
-    ColumnsList* columnList = createColumnList();
-    int* numbers;
+ColumnsList *enterAutoColumns(int numOfCols) {
+    ColumnNode *columnNode;
+    ColumnsList *columnList = createColumnList();
+    int *numbers;
 
     printf("Generating columns...");
     for (int i = 0; i < numOfCols; i++) {
@@ -100,9 +97,9 @@ ColumnsList* enterAutoColumns(int numOfCols) {
     return columnList;
 }
 
-ColumnNode* createColumn(int* numbers) {
-    ColumnNode* res;
-    res = (ColumnNode*)malloc(sizeof(ColumnNode));
+ColumnNode *createColumn(int *numbers) {
+    ColumnNode *res;
+    res = (ColumnNode *) malloc(sizeof(ColumnNode));
     checkMemoryAllocation(res);
     for (int i = 0; i < 6; i++) {
         res->numbers[i] = numbers[i];
@@ -113,9 +110,9 @@ ColumnNode* createColumn(int* numbers) {
     return res;
 }
 
-ColumnsList* createColumnList() {
-    ColumnsList* columnList;
-    columnList = (ColumnsList*)malloc(sizeof(ColumnsList));
+ColumnsList *createColumnList() {
+    ColumnsList *columnList;
+    columnList = (ColumnsList *) malloc(sizeof(ColumnsList));
     checkMemoryAllocation(columnList);
     columnList->head = NULL;
     columnList->tail = NULL;
@@ -123,10 +120,10 @@ ColumnsList* createColumnList() {
     return columnList;
 }
 
-ColumnsList* enterManualColumns(int numOfCols) {
+ColumnsList *enterManualColumns(int numOfCols) {
     int numbers[6], bucket[16], num, i, j, k, t, counter = 0;
-    ColumnNode* columnNode;
-    ColumnsList* columnList = createColumnList();
+    ColumnNode *columnNode;
+    ColumnsList *columnList = createColumnList();
 
     for (i = 0; i < numOfCols; i++) {
         for (k = 0; k < 16; bucket[k] = 0, k++);
@@ -136,12 +133,10 @@ ColumnsList* enterManualColumns(int numOfCols) {
             if (validateNumbers(num) == 0) {
                 printf("Invalid number\nPlease enter again: ");
                 j--;
-            }
-            else if (bucket[num] == 1) {
+            } else if (bucket[num] == 1) {
                 printf("Number is already use\nPlease enter again: ");
                 j--;
-            }
-            else {
+            } else {
                 bucket[num] = 1;
             }
         }
@@ -159,12 +154,12 @@ ColumnsList* enterManualColumns(int numOfCols) {
     return columnList;
 }
 
-int* sumColumnsMatches(PlayersList* playersList) {
-    PlayerNode* pPlayer;
-    ColumnNode* pCol;
-    int* bucket, i;
+int *sumColumnsMatches(PlayersList *playersList) {
+    PlayerNode *pPlayer;
+    ColumnNode *pCol;
+    int *bucket, i;
 
-    bucket = (int*)malloc(sizeof(int) * 7);
+    bucket = (int *) malloc(sizeof(int) * 7);
     checkMemoryAllocation(bucket);
     for (i = 0; i < 7; i++) {
         bucket[i] = 0;
@@ -183,24 +178,23 @@ int* sumColumnsMatches(PlayersList* playersList) {
     return bucket;
 }
 
-void insertNodeToEndColumnList(ColumnsList* lst, ColumnNode* newTail) {
+void insertNodeToEndColumnList(ColumnsList *lst, ColumnNode *newTail) {
     if (isEmptyCoulmnList(lst)) {
         lst->head = lst->tail = newTail;
-    }
-    else {
+    } else {
         lst->tail->next = newTail;
         lst->tail = newTail;
     }
 }
 
-int isEmptyCoulmnList(ColumnsList* lst) {
+int isEmptyCoulmnList(ColumnsList *lst) {
     if (lst->head == NULL) {
         return 1;
     }
     return 0;
 }
 
-void printColumn(int* numbers, int size) {
+void printColumn(int *numbers, int size) {
     int i;
 
     printf("[ ");
@@ -211,7 +205,7 @@ void printColumn(int* numbers, int size) {
     printf(" ]\n");
 }
 
-void printColumnsSummary(int* array) {
+void printColumnsSummary(int *array) {
     int i;
     printf("--------------------------------------------------\n");
     printf("TOTAL MATCHES SUMMARY\n");
@@ -222,8 +216,8 @@ void printColumnsSummary(int* array) {
     printf("--------------------------------------------------\n");
 }
 
-void freeColumnsList(ColumnsList* columnsList) {
-    ColumnNode* pCol;
+void freeColumnsList(ColumnsList *columnsList) {
+    ColumnNode *pCol;
 
     for (pCol = columnsList->head; pCol != NULL; pCol = columnsList->head) {
         columnsList->head = columnsList->head->next;

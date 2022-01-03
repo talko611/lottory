@@ -19,7 +19,7 @@ typedef struct columnsList {
 
 typedef struct playerNode {
     char* name;              //Player name
-    double avgMatch;         //Matches avarage
+    double avgMatch;         //Matches average
     int columnCounter;       //Number of columns
     ColumnsList* columns;    //Columns list
     struct playerNode* next;
