@@ -1,3 +1,6 @@
+//Adi Veiszman: 206820045
+//Tal Koren: 312498520
+
 #include "game.h"
 
 int main() {
