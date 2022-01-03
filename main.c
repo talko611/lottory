@@ -1,3 +1,5 @@
+#include "game.h"
+
 int main() {
     int choice, saveToFile = 0;
 

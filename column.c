@@ -193,6 +193,13 @@ void insertNodeToEndColumnList(ColumnsList* lst, ColumnNode* newTail) {
     }
 }
 
+int isEmptyCoulmnList(ColumnsList* lst) {
+    if (lst->head == NULL) {
+        return 1;
+    }
+    return 0;
+}
+
 void printColumn(int* numbers, int size) {
     int i;
 
@@ -213,13 +220,6 @@ void printColumnsSummary(int* array) {
         printf("%d matches - %d\n", i, array[i]);
     }
     printf("--------------------------------------------------\n");
-}
-
-int isEmptyCoulmnList(ColumnsList* lst) {
-    if (lst->head == NULL) {
-        return 1;
-    }
-    return 0;
 }
 
 void freeColumnsList(ColumnsList* columnsList) {

@@ -1,3 +1,6 @@
+#pragma once
+#include <stdio.h>
+#include <stdlib.h>
 #include "column.h"
 
 //This function prints main menu (choice between simulation, last game resutls and exit)
